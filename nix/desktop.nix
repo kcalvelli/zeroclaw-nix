@@ -16,10 +16,10 @@
 
 rustPlatform.buildRustPackage {
   pname = "zeroclaw-desktop";
-  version = "0.6.5";
+  version = "0.6.8";
   src = ./..;
 
-  cargoHash = "sha256-1/s2ijYqanhHIsYSw85c4H3T5phnAfvV7oQeAl/6lxQ=";
+  cargoHash = "sha256-/Uu+AlhFgmCymYPTs6K4Ffd0TfILCiymYkVgL9tZ1zU=";
 
   cargoBuildFlags = [ "-p" "zeroclaw-desktop" ];
   cargoTestFlags = [ "-p" "zeroclaw-desktop" ];

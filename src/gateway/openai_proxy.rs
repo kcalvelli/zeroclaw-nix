@@ -174,7 +174,7 @@ pub async fn handle_chat_completions(
     };
 
     if is_stream {
-        handle_streaming(&response).into_response()
+        handle_streaming(response).into_response()
     } else {
         handle_non_streaming(&response).into_response()
     }
@@ -206,10 +206,10 @@ fn handle_non_streaming(response: &str) -> Json<serde_json::Value> {
 // ── Streaming (single-burst SSE) ──
 
 fn handle_streaming(
-    response: &str,
+    response: String,
 ) -> Sse<impl Stream<Item = Result<Event, std::convert::Infallible>>> {
     let chat_id = format!("chatcmpl-{}", uuid::Uuid::new_v4());
-    let response_text = response.to_string();
+    let response_text = response;
 
     let role_chunk = oai_chunk(&chat_id, serde_json::json!({"role": "assistant"}), None);
     let content_chunk = oai_chunk(&chat_id, serde_json::json!({"content": response_text}), None);
