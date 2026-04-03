@@ -1115,15 +1115,19 @@ impl Channel for DiscordChannel {
                     }
 
                     let content = d.get("content").and_then(|c| c.as_str()).unwrap_or("");
+                    let has_attachments = d
+                        .get("attachments")
+                        .and_then(|a| a.as_array())
+                        .map_or(false, |a| !a.is_empty());
                     // DMs carry no guild_id in the Discord gateway payload. They are
                     // inherently private and implicitly addressed to the bot, so bypass
                     // the mention gate — requiring a @mention in a DM is never correct.
                     let is_dm = d.get("guild_id").is_none();
                     let effective_mention_only = self.mention_only && !is_dm;
-                    let Some(clean_content) =
-                        normalize_incoming_content(content, effective_mention_only, &bot_user_id)
-                    else {
-                        continue;
+                    let clean_content = match normalize_incoming_content(content, effective_mention_only, &bot_user_id) {
+                        Some(c) => c,
+                        None if has_attachments => String::new(),
+                        None => continue,
                     };
 
                     let attachment_text = {
